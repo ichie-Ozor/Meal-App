@@ -8,6 +8,9 @@ import MealsOverViewScreen from './screens/MealOverviewScreen';
 import MealDetailScreen from './screens/MealDetailScreen';
 import FavoritesScreen from './screens/FavoritesScreen';
 import {AntDesign} from '@expo/vector-icons'
+import {Provider} from 'react-redux'
+// import FavoritesContextProvider from './store/context/favorites-context';
+import { store } from './store/redux/store'
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
 
@@ -49,7 +52,9 @@ function DrawerNavigator(){
 export default function App() {
   return (
     <>
-    <StatusBar style='white'/>
+    <StatusBar style='light'/>
+    {/* <FavoritesContextProvider>   this is for context API */}
+    <Provider store={store}>
     <NavigationContainer>
       <Stack.Navigator
         screenOptions={{
@@ -77,6 +82,8 @@ export default function App() {
           />
       </Stack.Navigator>
     </NavigationContainer>
+    </Provider>
+    {/* </FavoritesContextProvider> */}
     </>
   );
 }

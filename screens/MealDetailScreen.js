@@ -1,29 +1,47 @@
-import { useLayoutEffect } from 'react'
+import { useContext, useLayoutEffect } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
 import { Text, Image, Button, View, StyleSheet, ScrollView } from 'react-native'
 import { MEALS } from '../data/dummy-data'
 import MealDetails from '../component/MealDetails'
 import Subtitle from '../component/MealDetail/Subtitle';
 import List from '../component/MealDetail/List';
 import IconButton from '../component/IconButton';
+import { addFavorite, removeFavorite } from '../store/redux/fovorites'
+// import {FavoritesContext} from '../store/context/favorites-context'
 
 function MealDetailScreen({route, navigation}){
+    // const favoriteMealCtx = useContext(FavoritesContext)
+
+    const favoriteMealsIds = useSelector((state) => state.favoriteMeals.ids)
+    const dispatch = useDispatch()
+
     const mealId = route.params.mealId
     const selectedMeal = MEALS.find((meal) => meal.id === mealId);
-    function headerOnPressHandler(){
-        console.log("on Press yes")
+    // const mealsIsFavorite = favoriteMealCtx.ids.includes(mealId)  //this is for context
+    // console.log(favoriteMealCtx.ids, "meal details")
+
+    const mealsIsFavorite = favoriteMealsIds.includes(mealId)
+    function changeFavoriteStatusHandler(){
+        if(mealsIsFavorite){
+            // favoriteMealCtx.removeFavorite(mealId)  //this is for context
+            dispatch(removeFavorite({id: mealId}));
+        } else {
+            // favoriteMealCtx.addFavorite(mealId)  //this is for context
+            dispatch(addFavorite({id: mealId}))
+        }
     }
     
     useLayoutEffect(() => {
         navigation.setOptions({
                 headerRight: () => {
                   return <IconButton 
-                            onPress={headerOnPressHandler}
-                            color='white'
-                            icon='star'
-                            />
+                  color='white'
+                  icon={mealsIsFavorite ? 'star' : 'star-outline'}
+                  onPress={changeFavoriteStatusHandler}
+                />
                 }
         })
-    },[])
+    },[navigation, changeFavoriteStatusHandler])
     return (
         <ScrollView style={styles.rootContainer}>
             <Image style={styles.image} source={{uri: selectedMeal.imageUrl}}/>
